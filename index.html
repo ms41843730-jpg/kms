@@ -38,6 +38,7 @@
                         <i class="fa-solid fa-chart-line"></i>
                         <span>홈</span>
                     </button>
+                    <!-- 위험성평가자동화 버튼 (직접 페이지 전환 + 외부이동 지원) -->
                     <button id="nav-auto" onclick="showTab('auto')" class="nav-btn px-4 py-2 rounded-md font-medium text-sm transition-colors flex items-center space-x-2 text-blue-100 hover:bg-blue-800 hover:text-white">
                         <i class="fa-solid fa-robot"></i>
                         <span>위험성평가자동화</span>
@@ -93,10 +94,17 @@
                     <span class="bg-blue-500 bg-opacity-40 text-blue-100 text-xs px-3 py-1 rounded-full font-semibold uppercase tracking-wider">2026년 정기 위험성평가</span>
                     <h1 class="text-2xl sm:text-3xl font-bold mt-2">안전한 작업 환경, 위험성평가로부터 시작됩니다</h1>
                     <p class="mt-2 text-blue-100 text-sm sm:text-base">자동화 도구를 사용하여 사업장의 유해·위험요인을 신속하게 발굴하고 개선 대책을 수립하세요.</p>
-                    <button onclick="showTab('auto')" class="mt-4 bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-5 py-2.5 rounded-lg shadow transition duration-200 flex items-center space-x-2 text-sm">
-                        <i class="fa-solid fa-wand-magic-sparkles"></i>
-                        <span>지금 평가 작성하기</span>
-                    </button>
+                    <div class="flex flex-wrap gap-3 mt-4">
+                        <button onclick="openExternalLink()" class="bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-5 py-2.5 rounded-lg shadow transition duration-200 flex items-center space-x-2 text-sm">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                            <span>자동화 시스템 새창 열기</span>
+                            <i class="fa-solid fa-arrow-up-right-from-square text-xs ml-1"></i>
+                        </button>
+                        <button onclick="showTab('auto')" class="bg-blue-600 hover:bg-blue-500 text-white font-semibold px-5 py-2.5 rounded-lg shadow transition duration-200 flex items-center space-x-2 text-sm">
+                            <i class="fa-solid fa-desktop"></i>
+                            <span>페이지 내에서 보기</span>
+                        </button>
+                    </div>
                 </div>
                 <i class="fa-solid fa-helmet-safety absolute -right-6 -bottom-6 text-9xl text-white opacity-10"></i>
             </div>
@@ -199,88 +207,31 @@
             </div>
         </section>
 
-        <!-- TAB 2: AUTOMATION (위험성평가 자동화) -->
-        <section id="tab-auto" class="hidden space-y-6">
-            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                <div class="border-b border-slate-200 pb-4 mb-6">
-                    <h2 class="text-xl font-bold text-slate-900 flex items-center space-x-2">
-                        <i class="fa-solid fa-wand-magic-sparkles text-blue-600"></i>
-                        <span>AI 기반 위험성평가 자동 작성</span>
+        <!-- TAB 2: AUTOMATION (위험성평가자동화 - Iframe 및 외부동시지원) -->
+        <section id="tab-auto" class="hidden space-y-4">
+            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-900 flex items-center space-x-2">
+                        <i class="fa-solid fa-robot text-blue-600"></i>
+                        <span>위험성평가 자동화 시스템</span>
                     </h2>
-                    <p class="text-sm text-slate-500 mt-1">작업 업종과 상세 작업을 선택하면 표준 위험요인과 개선대책이 자동으로 생성됩니다.</p>
+                    <p class="text-xs text-slate-500">지정된 위험성평가 자동화 웹 서비스가 연동되어 실행됩니다.</p>
                 </div>
-
-                <!-- Form Step 1: Selection -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                    <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-2">1. 업종 선택</label>
-                        <select id="industry-select" onchange="updateWorkTypes()" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            <option value="">-- 업종 선택 --</option>
-                            <option value="manufacturing">제조업</option>
-                            <option value="construction">건설업</option>
-                            <option value="service">서비스업/물류</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-2">2. 세부 작업 선택</label>
-                        <select id="work-select" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            <option value="">-- 먼저 업종을 선택하세요 --</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-2">3. 평가 기법</label>
-                        <select id="method-select" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            <option value="3by3">빈도·강도법 (3x3 Matrix)</option>
-                            <option value="3level">3단계 판단법 (상·중·하)</option>
-                            <option value="checklist">체크리스트법</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="flex justify-end mb-6">
-                    <button onclick="generateRiskAssessment()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2.5 rounded-lg text-sm shadow flex items-center space-x-2">
-                        <i class="fa-solid fa-bolt"></i>
-                        <span>위험요인 및 대책 자동 불러오기</span>
+                <div class="flex items-center space-x-2">
+                    <button onclick="reloadIframe()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1">
+                        <i class="fa-solid fa-rotate-right"></i>
+                        <span>새로고침</span>
+                    </button>
+                    <button onclick="openExternalLink()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1">
+                        <span>새 창에서 크게 보기</span>
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
                     </button>
                 </div>
+            </div>
 
-                <!-- Generated Assessment Table Area -->
-                <div id="assessment-result" class="space-y-4">
-                    <div class="flex justify-between items-center bg-slate-100 p-3 rounded-lg">
-                        <h3 class="font-bold text-slate-700 text-sm">위험성평가표 작성 결과</h3>
-                        <div class="space-x-2">
-                            <button onclick="addCustomRow()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs px-3 py-1.5 rounded font-semibold">
-                                <i class="fa-solid fa-plus"></i> 항목 추가
-                            </button>
-                            <button onclick="saveAssessment()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-1.5 rounded font-semibold">
-                                <i class="fa-solid fa-floppy-disk"></i> 평가 저장 및 제출
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Table -->
-                    <div class="overflow-x-auto border border-slate-200 rounded-lg">
-                        <table class="w-full text-left border-collapse text-xs sm:text-sm">
-                            <thead>
-                                <tr class="bg-slate-100 border-b border-slate-200 text-slate-700">
-                                    <th class="p-3 font-semibold border-r border-slate-200 w-12 text-center">No</th>
-                                    <th class="p-3 font-semibold border-r border-slate-200 min-w-[150px]">작업단계 / 세부작업</th>
-                                    <th class="p-3 font-semibold border-r border-slate-200 min-w-[200px]">위험요인 (Hazard)</th>
-                                    <th class="p-3 font-semibold border-r border-slate-200 w-24 text-center">빈도(가능성)</th>
-                                    <th class="p-3 font-semibold border-r border-slate-200 w-24 text-center">강도(중대성)</th>
-                                    <th class="p-3 font-semibold border-r border-slate-200 w-20 text-center">위험성</th>
-                                    <th class="p-3 font-semibold border-r border-slate-200 min-w-[220px]">개선대책 (Reduction Measure)</th>
-                                    <th class="p-3 font-semibold text-center w-16">관리</th>
-                                </tr>
-                            </thead>
-                            <tbody id="risk-table-body" class="divide-y divide-slate-200">
-                                <tr class="text-center text-slate-400">
-                                    <td colspan="8" class="p-8">위의 옵션을 선택한 후 [위험요인 및 대책 자동 불러오기] 버튼을 클릭하세요.</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+            <!-- Embedded External Automation Page -->
+            <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden h-[750px] relative">
+                <iframe id="auto-frame" src="https://kms-henna.vercel.app/risk.html" class="w-full h-full border-0" title="위험성평가 자동화" allow="clipboard-write; clipboard-read"></iframe>
             </div>
         </section>
 
@@ -430,45 +381,7 @@
 
     <!-- JavaScript Logic -->
     <script>
-        // Data Store for Automation Examples
-        const presetData = {
-            manufacturing: {
-                press: [
-                    { step: "재료 투입", hazard: "프레스 금형 사이에 손가락 끼임 (협착)", freq: 3, sev: 3, measure: "양수조작식 안전장치 설치 및 방호울 정기 점검" },
-                    { step: "성형 가공", hazard: "가공 중 발생한 금속 칩 눈 침투", freq: 2, sev: 2, measure: "보안경 착용 의무화 및 투명 방호커버 설치" },
-                    { step: "제품 이송", hazard: "중량물 들기 작업 시 허리 부상 (근골격계)", freq: 3, sev: 2, measure: "보조 리프트 도입 및 2인 1조 작업 수칙 준수" }
-                ],
-                chemical: [
-                    { step: "원료 혼합", hazard: "유해 화학물질 증기 흡입", freq: 2, sev: 3, measure: "국소배기장치 가동 및 방독마스크 착용" },
-                    { step: "세척 작업", hazard: "인화성 물질에 의한 화재 발생 위험", freq: 1, sev: 3, measure: "방폭형 설비 적용 및 소화기 배치, 정전기 제거" }
-                ]
-            },
-            construction: {
-                scaffold: [
-                    { step: "비계 조립", hazard: "고소 작업 중 작업자 추락", freq: 2, sev: 3, measure: "안전대 착용 및 고정대 체결, 추락방지망 설치" },
-                    { step: "자재 인양", hazard: "상부 인양 자재 낙하로 인한 맞음", freq: 2, sev: 3, measure: "하부 통제구역 설정 및 작업모 착용 필수" }
-                ]
-            },
-            service: {
-                warehouse: [
-                    { step: "지게차 운반", hazard: "지게차와 보행자 충돌", freq: 2, sev: 3, measure: "보행자 전용통로 구획 및 지게차 후방카메라/경보기 설치" },
-                    { step: "렉 하역", hazard: "적재물 붕괴로 인한 낙하 위험", freq: 2, sev: 2, measure: "적재 높이 제한 준수 및 렉 안전핀 점검" }
-                ]
-            }
-        };
-
-        const workOptions = {
-            manufacturing: [
-                { id: "press", name: "프레스 및 금속가공" },
-                { id: "chemical", name: "화학물질 취급작업" }
-            ],
-            construction: [
-                { id: "scaffold", name: "비계 및 가설공사" }
-            ],
-            service: [
-                { id: "warehouse", name: "물류창고 지게차/하역작업" }
-            ]
-        };
+        const targetUrl = "https://kms-henna.vercel.app/risk.html";
 
         // Navigation Tab Switcher
         function showTab(tabId) {
@@ -485,7 +398,11 @@
             });
 
             // Show current tab & highlight button
-            document.getElementById('tab-' + tabId).classList.remove('hidden');
+            const currentTab = document.getElementById('tab-' + tabId);
+            if (currentTab) {
+                currentTab.classList.remove('hidden');
+            }
+            
             const activeBtn = document.getElementById('nav-' + tabId);
             if (activeBtn) {
                 activeBtn.classList.add('bg-blue-800', 'text-white');
@@ -496,150 +413,17 @@
             document.getElementById('mobile-menu').classList.add('hidden');
         }
 
-        // Update Work Selection Options Based on Industry
-        function updateWorkTypes() {
-            const indSelect = document.getElementById('industry-select').value;
-            const workSelect = document.getElementById('work-select');
-            workSelect.innerHTML = '<option value="">-- 세부 작업 선택 --</option>';
+        // Open Link Safely in New Tab
+        function openExternalLink() {
+            window.open(targetUrl, '_blank', 'noopener,noreferrer');
+        }
 
-            if (indSelect && workOptions[indSelect]) {
-                workOptions[indSelect].forEach(work => {
-                    const option = document.createElement('option');
-                    option.value = work.id;
-                    option.textContent = work.name;
-                    workSelect.appendChild(option);
-                });
+        // Reload embedded Iframe
+        function reloadIframe() {
+            const iframe = document.getElementById('auto-frame');
+            if (iframe) {
+                iframe.src = targetUrl;
             }
-        }
-
-        // Generate Risk Assessment Rows
-        function generateRiskAssessment() {
-            const ind = document.getElementById('industry-select').value;
-            const work = document.getElementById('work-select').value;
-            const tbody = document.getElementById('risk-table-body');
-
-            if (!ind || !work) {
-                alert('업종과 세부 작업을 모두 선택해주세요.');
-                return;
-            }
-
-            const items = presetData[ind] && presetData[ind][work] ? presetData[ind][work] : [];
-            tbody.innerHTML = '';
-
-            if (items.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8" class="p-4 text-center text-slate-400">등록된 데이터가 없습니다. 직접 항목을 추가해주세요.</td></tr>`;
-                return;
-            }
-
-            items.forEach((item, index) => {
-                const score = item.freq * item.sev;
-                let badgeClass = "bg-emerald-100 text-emerald-800";
-                let riskText = "하 (" + score + ")";
-
-                if (score >= 6) {
-                    badgeClass = "bg-red-100 text-red-800 font-bold";
-                    riskText = "상 (" + score + ")";
-                } else if (score >= 3) {
-                    badgeClass = "bg-amber-100 text-amber-800 font-bold";
-                    riskText = "중 (" + score + ")";
-                }
-
-                const tr = document.createElement('tr');
-                tr.className = "hover:bg-slate-50";
-                tr.innerHTML = `
-                    <td class="p-3 text-center font-medium text-slate-500">${index + 1}</td>
-                    <td class="p-2"><input type="text" value="${item.step}" class="w-full p-1.5 border border-slate-200 rounded text-xs"></td>
-                    <td class="p-2"><input type="text" value="${item.hazard}" class="w-full p-1.5 border border-slate-200 rounded text-xs"></td>
-                    <td class="p-2 text-center">
-                        <select onchange="recalculateRisk(this)" class="p-1 border border-slate-200 rounded text-xs freq-select">
-                            <option value="1" ${item.freq==1?'selected':''}>1 (낮음)</option>
-                            <option value="2" ${item.freq==2?'selected':''}>2 (보통)</option>
-                            <option value="3" ${item.freq==3?'selected':''}>3 (높음)</option>
-                        </select>
-                    </td>
-                    <td class="p-2 text-center">
-                        <select onchange="recalculateRisk(this)" class="p-1 border border-slate-200 rounded text-xs sev-select">
-                            <option value="1" ${item.sev==1?'selected':''}>1 (소경상)</option>
-                            <option value="2" ${item.sev==2?'selected':''}>2 (중상)</option>
-                            <option value="3" ${item.sev==3?'selected':''}>3 (치명적)</option>
-                        </select>
-                    </td>
-                    <td class="p-2 text-center">
-                        <span class="px-2 py-1 rounded text-xs ${badgeClass} risk-badge">${riskText}</span>
-                    </td>
-                    <td class="p-2"><input type="text" value="${item.measure}" class="w-full p-1.5 border border-slate-200 rounded text-xs"></td>
-                    <td class="p-2 text-center">
-                        <button onclick="deleteRow(this)" class="text-slate-400 hover:text-red-500"><i class="fa-solid fa-trash"></i></button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        // Dynamic Recalculation for Frequency / Severity
-        function recalculateRisk(element) {
-            const tr = element.closest('tr');
-            const freq = parseInt(tr.querySelector('.freq-select').value);
-            const sev = parseInt(tr.querySelector('.sev-select').value);
-            const badge = tr.querySelector('.risk-badge');
-            const score = freq * sev;
-
-            let badgeClass = "px-2 py-1 rounded text-xs bg-emerald-100 text-emerald-800";
-            let riskText = "하 (" + score + ")";
-
-            if (score >= 6) {
-                badgeClass = "px-2 py-1 rounded text-xs bg-red-100 text-red-800 font-bold";
-                riskText = "상 (" + score + ")";
-            } else if (score >= 3) {
-                badgeClass = "px-2 py-1 rounded text-xs bg-amber-100 text-amber-800 font-bold";
-                riskText = "중 (" + score + ")";
-            }
-
-            badge.className = badgeClass;
-            badge.textContent = riskText;
-        }
-
-        function addCustomRow() {
-            const tbody = document.getElementById('risk-table-body');
-            const count = tbody.children.length + 1;
-            const tr = document.createElement('tr');
-            tr.className = "hover:bg-slate-50";
-            tr.innerHTML = `
-                <td class="p-3 text-center font-medium text-slate-500">${count}</td>
-                <td class="p-2"><input type="text" placeholder="작업단계" class="w-full p-1.5 border border-slate-200 rounded text-xs"></td>
-                <td class="p-2"><input type="text" placeholder="위험요인 입력" class="w-full p-1.5 border border-slate-200 rounded text-xs"></td>
-                <td class="p-2 text-center">
-                    <select onchange="recalculateRisk(this)" class="p-1 border border-slate-200 rounded text-xs freq-select">
-                        <option value="1">1 (낮음)</option>
-                        <option value="2">2 (보통)</option>
-                        <option value="3">3 (높음)</option>
-                    </select>
-                </td>
-                <td class="p-2 text-center">
-                    <select onchange="recalculateRisk(this)" class="p-1 border border-slate-200 rounded text-xs sev-select">
-                        <option value="1">1 (소경상)</option>
-                        <option value="2">2 (중상)</option>
-                        <option value="3">3 (치명적)</option>
-                    </select>
-                </td>
-                <td class="p-2 text-center">
-                    <span class="px-2 py-1 rounded text-xs bg-emerald-100 text-emerald-800 risk-badge">하 (1)</span>
-                </td>
-                <td class="p-2"><input type="text" placeholder="개선대책 입력" class="w-full p-1.5 border border-slate-200 rounded text-xs"></td>
-                <td class="p-2 text-center">
-                    <button onclick="deleteRow(this)" class="text-slate-400 hover:text-red-500"><i class="fa-solid fa-trash"></i></button>
-                </td>
-            `;
-            tbody.appendChild(tr);
-        }
-
-        function deleteRow(btn) {
-            btn.closest('tr').remove();
-        }
-
-        function saveAssessment() {
-            alert('작성하신 위험성평가표가 성공적으로 저장 및 제출되었습니다.');
-            showTab('home');
         }
 
         // Modal Controls
@@ -708,4 +492,3 @@
 </body>
 </html>
 
-f
